@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kolokviumska 1</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        tr, th, td {
+            padding: 10px;
+            border: 1px solid black;
+        }
+
+        div {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<h1>Online Shop</h1>
+<div>
+    Name and Surname: <input type="text" id="name">
+</div>
+<div>
+    Item: <input type="text" id="item">
+</div>
+<div>
+    Item code: <input type="text" id="code">
+</div>
+<div>
+    Description: <input type="text" id="description">
+</div>
+<div>
+    Price: <input type="text" id="price">
+</div>
+<div>
+    Status: <select id="status">
+    <option>used</option>
+    <option>unused</option>
+</select>
+</div>
+<div>
+    <button onclick="add_table()">Add</button>
+</div>
+<p>Active items: <span id="active">0</span></p>
+
+<h1>Unused items</h1>
+<table id="unused">
+    <tr>
+        <th>Name</th>
+        <th>Item</th>
+        <th>Price</th>
+        <th>Code</th>
+        <th>Number</th>
+        <th>Actions</th>
+    </tr>
+</table>
+
+<h1>Used items</h1>
+<table id="used">
+    <tr>
+        <th>Name</th>
+        <th>Item</th>
+        <th>Price</th>
+        <th>Code</th>
+        <th>Number</th>
+        <th>Actions</th>
+    </tr>
+</table>
+
+<script>
+    let counter = 0;
+
+    function add_table() {
+        let name = document.getElementById("name");
+        name = name.value;
+        let item = document.getElementById("item");
+        item = item.value;
+        let price = document.getElementById("price");
+        price = parseFloat(price.value) * 1.1;
+        let code = document.getElementById("code");
+        code = code.value;
+        let description = document.getElementById("description");
+        description = description.value;
+        let status = document.getElementById("status");
+        status = status.value;
+        if (name.length === 0 || item.length === 0 || price.length === 0 || code.length === 0 || description.length === 0 || status.length === 0
+            || price < 0) {
+            alert("Missing information");
+            return;
+        }
+
+        let original_code = code;
+        for (let i = 0; i < 10; i++) {
+            code = code.replaceAll(i, "");
+        }
+        code = code.replaceAll("!", "");
+        let row = "<tr id='" + code + "'><td>" + name + "</td><td>" + item + "</td><td>" + price + "</td><td>" + original_code + "</td><td>" + code + "</td><td><button onclick='sell_item(this)'>Sold</button></td></tr>"
+        if (document.getElementById(code) != null) {
+            alert("Duplicate");
+            return;
+        }
+
+        let table = document.getElementById(status);
+        table.innerHTML += row;
+        counter++;
+        document.getElementById("active").innerHTML = counter;
+    }
+
+    function sell_item(object) {
+        let row = object.parentNode.parentNode;
+        row.style.background = "yellow";
+        object.remove();
+        counter--;
+        document.getElementById("active").innerHTML = counter;
+    }
+</script>
+</body>
+</html>

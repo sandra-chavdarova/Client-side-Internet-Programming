@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vozila</title>
+    <style>
+        body, button, input {
+            font-family: Calibri, serif;
+            font-size: 17px;
+        }
+
+        div {
+            margin-bottom: 10px;
+        }
+
+        #cards div {
+            padding: 20px;
+            border: 2px solid black;
+            width: 300px;
+            float: left;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+<h1>Осигурување на возила</h1>
+<div>
+    Име: <input type="text" id="name">
+</div>
+<div>
+    Презиме: <input type="text" id="surname">
+</div>
+<div>
+    Регистарска таблица: <input type="text" id="registration">
+</div>
+<div>
+    Години на старост: <input type="text" id="age">
+</div>
+<div>
+    Сообраќајна незгода: <input type="radio" value="yes" id="yes" name="accident">Да
+    <input type="radio" value="no" id="no" name="accident"> Не
+</div>
+<button onclick="generate()">Генерирај сметка</button>
+<h1>Сметки</h1>
+<p>Вкупно сметки за плаќање: <span id="total">0</span></p>
+<div id="cards">
+
+</div>
+
+<script>
+    let counter = 0;
+
+    function generate() {
+        let name = document.getElementById("name");
+        name = name.value;
+        let surname = document.getElementById("surname");
+        surname = surname.value;
+        let registration = document.getElementById("registration");
+        registration = registration.value;
+        let age = document.getElementById("age");
+        age = age.value;
+        let accidentYes = document.getElementById("yes");
+
+        let accident;
+        if (accidentYes.checked) {
+            accident = true;
+        } else {
+            accident = false;
+        }
+
+        if (name.length === 0 || surname.length === 0 || registration.length === 0 || age.length === 0 || accident.length === 0) {
+            alert("Missing information");
+            return;
+        }
+        if (!check_plate(registration)) {
+            alert("Invalid registration");
+            return;
+        }
+        let price = 3000;
+        if (accident) {
+            price += parseInt(500);
+        }
+        if (check_plate(registration) && golden(registration)) {
+            price += parseInt(1000);
+        }
+        let card;
+        if (age <= 30) {
+            card = "<div style='background: lightgreen'><p>" + name + surname + "</p><p>" + registration + "</p><p>Сообраќајки: " + (accident ? "Има" : "Нема") + "</p><p>Старост на возило: " + age + "</p><p>За плаќање: " + price + "</p><button onclick='pay(this)'>Плати</button><button onclick='delete_card(this)'>Избриши</button></div>";
+        } else {
+            card = "<div style='background: #f5a6a6'><p>" + name + surname + "</p><p>" + registration + "</p><p>Сообраќајки: " + (accident ? "Има" : "Нема") + "</p><p>Старост на возило: " + age + "</p><p>За плаќање: " + price + "</p><button onclick='pay(this)'>Плати</button><button onclick='delete_card(this)'>Избриши</button></div>";
+        }
+
+        let cards = document.getElementById("cards");
+        cards.innerHTML += card;
+        counter++;
+        let total = document.getElementById("total");
+        total.innerHTML = counter;
+    }
+
+    function check_plate(plate) {
+        plate = plate.split("-");
+        if (plate[0].charCodeAt(0) < 65 || plate[0].charCodeAt(1) < 65 || plate[0].charCodeAt(0) > 90 || plate[0].charCodeAt(1) > 90 || plate[0].length !== 2 ||
+            plate[2].charCodeAt(0) < 65 || plate[2].charCodeAt(1) < 65 || plate[2].charCodeAt(0) > 90 || plate[2].charCodeAt(1) > 90 || plate[2].length !== 2) {
+            return false;
+        }
+        if (plate[1].length !== 4) {
+            return false;
+        }
+        // golden(plate[1]);
+        plate = plate[1].split("");
+        for (let i = 0; i < plate.length; i++) {
+            if (isNaN(parseInt(plate[i]))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function golden(plate) {
+        plate = plate.split("-");
+        plate = parseInt(plate[1]);
+        if (plate % 1111 === 0) {
+            return true;
+        }
+        return false;
+    }
+
+    function pay(object) {
+        let card = object.parentNode;
+        let buttons = card.getElementsByTagName("button");
+        for (let i = 0; i < buttons.length; i++) {
+            buttons[i].disabled = true;
+        }
+    }
+
+    function delete_card(object) {
+        let card = object.parentNode;
+        counter--;
+        let total = document.getElementById("total");
+        total.innerHTML = counter;
+        card.remove();
+    }
+</script>
+</body>
+</html>

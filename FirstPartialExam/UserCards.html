@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Cards</title>
+    <style>
+        body, input, select, button {
+            font-size: 17px;
+            font-family: Calibri, serif;
+        }
+
+        input, select {
+            width: 300px;
+            text-align: center;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        div {
+            margin-bottom: 10px;
+        }
+
+        span {
+            font-weight: bold;
+        }
+
+        #cards div {
+            padding: 10px;
+            margin: 5px;
+            float: left;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+<h1>User Cards</h1>
+<div>
+    Username: <input type="text" id="username">
+</div>
+<div>
+    Width: <input type="text" id="width"> px
+</div>
+<div>
+    Height: <input type="text" id="height"> px
+</div>
+<div>
+    Card ID: <input type="text" id="id">
+</div>
+<div>
+    Color: <select id="color">
+    <option>red</option>
+    <option>green</option>
+    <option>blue</option>
+    <option>yellow</option>
+</select>
+</div>
+<div>
+    <button onclick="create_card()">Create</button>
+</div>
+<p>Total value of sold cards: <span id="total">0</span></p>
+<div id="cards">
+
+</div>
+
+<script>
+    let total = 0;
+
+    function create_card() {
+        let username = document.getElementById("username");
+        username = username.value;
+        let width = document.getElementById("width");
+        width = width.value;
+        let height = document.getElementById("height");
+        height = height.value;
+        let id = document.getElementById("id");
+        id = id.value;
+        let color = document.getElementById("color");
+        color = color.value;
+
+        if (username.length === 0 || width.length === 0 || height.length === 0 || id.length === 0 || color.length === 0) {
+            alert("Missing information");
+            return;
+        }
+        if (width < 350 || height < 350) {
+            alert("Invalid input");
+            return
+        }
+        if (!check_id(id)) {
+            alert("Invalid ID");
+            return;
+        }
+        let value = width * height * 0.5;
+        if (color === "green") {
+            value += parseInt(1000);
+        }
+
+        let newCard = document.getElementById(id);
+        if (newCard !== null) {
+            total -= parseInt(newCard.getAttribute("title"));
+            document.getElementById("total").innerHTML = total;
+            newCard.remove();
+        }
+
+        let cards = document.getElementById("cards");
+        let card = "<div title='" + value + "' style='background: " + color + "; width: " + width + "px; height: " + height + "px' id='" + id + "'><p>ID: " + id + "</p><p>Width: " + width + "</p><p>Height: " + height + "</p><p>Value: " + value + "</p><button onclick='sell(this)'>Sell</button></div>";
+        cards.innerHTML += card;
+        total += parseInt(value);
+        document.getElementById("total").innerHTML = total;
+    }
+
+    function sell(object) {
+        let card = object.parentNode;
+        total -= parseInt(card.getAttribute("title"));
+        document.getElementById("total").innerHTML = total;
+        card.remove();
+    }
+
+    function check_id(id) {
+        for (let i = 0; i < id.length; i++) {
+            if (id.charCodeAt(i) >= 65 && id.charCodeAt(i) <= 90) {
+                return false;
+            }
+        }
+        for (let i = 0; i < 10; i++) {
+            if (id.indexOf(i) !== -1) {
+                return false;
+            }
+        }
+        return true;
+    }
+</script>
+</body>
+</html>

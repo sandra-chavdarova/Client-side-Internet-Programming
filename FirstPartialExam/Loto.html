@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Loto</title>
+    <style>
+        body, input, select, button {
+            font-size: 17px;
+            font-family: Calibri, serif;
+        }
+
+        #form, #lucky {
+            display: inline-block;
+            width: 500px;
+            vertical-align: top;
+        }
+
+        div {
+            margin: 10px;
+        }
+
+        .number {
+            border: 1px solid black;
+            border-radius: 100%;
+            margin-left: 2px;
+            padding: 2px;
+            display: inline-block;
+        }
+
+        .item {
+            border: 2px solid black;
+            display: inline-block;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+<h1>National Lottery Game</h1>
+<div id="form">
+    <h3>Assign Form</h3>
+    <div>
+        Name and surname: <input type="text" id="name">
+    </div>
+    <div>
+        Amount: <input type="text" id="amount">
+    </div>
+    <div>
+        Code: <input type="text" id="code">
+    </div>
+    <div>
+        Combination: <input type="text" id="combination">
+    </div>
+    <div>
+        Bonus: <select id="bonus">
+        <option>yes</option>
+        <option>no</option>
+    </select>
+    </div>
+    <button onclick="add_card()">Add</button>
+</div>
+<div id="lucky">
+    <h3>Lucky numbers</h3>
+    <div id="numbers">
+
+    </div>
+    <button onclick="generateNumbers()">Generate numbers</button>
+    <p>Total: <span id="total_win">0</span></p>
+</div>
+<div id="cards">
+
+</div>
+
+</body>
+<script>
+    let counter = 0;
+    let total = 0;
+
+    function Card(name, amount, code, combination, bonus) {
+        this.name = name;
+        this.amount = amount;
+        this.code = code;
+        this.combination = combination;
+        this.bonus = bonus;
+    }
+
+    let cards = [];
+
+    function add_card() {
+        let name = document.getElementById("name");
+        name = name.value;
+        let amount = document.getElementById("amount");
+        amount = amount.value;
+        let code = document.getElementById("code");
+        code = code.value;
+        let combination = document.getElementById("combination");
+        combination = combination.value;
+        let bonus = document.getElementById("bonus");
+        bonus = bonus.value;
+
+        if (name.length === 0 || amount.length === 0 || code.length === 0 || combination.length === 0) {
+            alert("Missing information");
+            return;
+        }
+        for (let i = 0; i < 10; i++) {
+            if (code.indexOf(i) !== -1) {
+                alert("Invalid code");
+                return;
+            }
+        }
+        if (code.indexOf("!") !== -1 || code.indexOf("%") !== -1) {
+            alert("Invalid code");
+            return;
+        }
+
+        if (document.getElementById(code) !== null) {
+            alert("User already exists");
+            return;
+        }
+
+        combination = combination.split(",");
+        let card = new Card(name, amount, code, combination, bonus);
+        cards.push(card);
+
+        let combinationDiv = "";
+        for (let i = 0; i < combination.length; i++) {
+            combinationDiv += "<div class='number'>" + combination[i] + "</div>";
+        }
+        let cardDiv = "<div class='item' id='" + code + "'><p>Name: " + name + "</p><p>Code: " + code + "</p><p>Combination:</p>" + combinationDiv + "<p>Amount: " + amount + "</p></div>";
+
+        let cardsDiv = document.getElementById("cards");
+        cardsDiv.innerHTML += cardDiv;
+        counter++;
+    }
+
+    function generateNumbers() {
+        if (counter < 5) {
+            return;
+        }
+        let lucky_numbers = document.getElementById("numbers");
+        let numbers = [];
+        for (let i = 0; i < 7; i++) {
+            numbers[i] = parseInt(Math.random() * 31 + 1);
+            lucky_numbers.innerHTML += "<div class='number'>" + numbers[i] + "</div>";
+        }
+
+        for (let i = 0; i < cards.length; i++) {
+            let matching = 0;
+            for (let j = 0; j < 7; j++) {
+                for (let k = 0; k < 7; k++) {
+                    if (parseInt(cards[i].combination[j]) === numbers[k]) {
+                        matching++;
+                    }
+                }
+            }
+
+            let item = document.getElementById(cards[i].code);
+            if (matching <= 3) {
+                item.style.background = "lightyellow";
+            } else if (matching === 4 || matching === 5) {
+                item.style.background = "lightblue";
+            } else {
+                item.style.background = "lightgreen";
+            }
+
+            let lottery = parseInt(cards[i].amount) + parseInt(matching * 30);
+            if (cards[i].bonus === "yes") {
+                lottery += parseInt(500);
+            }
+
+            total += parseInt(lottery);
+
+            item.innerHTML += "<p>Total win: " + lottery + "</p><button onclick='getPaid(this, " + lottery + ")'>Get paid</button>";
+
+            let total_amount = document.getElementById("total_win");
+            total_amount.innerHTML = total;
+        }
+    }
+
+    function getPaid(object, amount) {
+        let item = object.parentNode;
+        total -= amount;
+        let total_amount = document.getElementById("total_win");
+        total_amount.innerHTML = total;
+        item.remove();
+    }
+</script>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            font-family: Calibri, serif;
+            font-size: 17px;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        th, td, tr {
+            border: 1px solid black;
+            padding: 10px;
+        }
+
+        div {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<h1>Online Class</h1>
+<div>
+    Name and surname: <input type="text" id="name">
+</div>
+<div>
+    Email: <input type="text" id="email">
+</div>
+<div>
+    Age: <input type="text" id="age">
+</div>
+<div>
+    Username: <input type="text" id="username">
+</div>
+<div>
+    Password: <input type="text" id="password">
+</div>
+<div>
+    Role: <select id="role">
+    <option>teacher</option>
+    <option>student</option>
+</select>
+</div>
+<div>
+    <button onclick="add_person()">Add</button>
+</div>
+<p>Active teachers: <span id="active">0</span></p>
+<table id="table">
+    <tr>
+        <th>Name</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Age</th>
+        <th>Role</th>
+        <th>Actions</th>
+    </tr>
+</table>
+
+<script>
+    let counter = 0;
+
+    function add_person() {
+        let name = document.getElementById("name");
+        name = name.value;
+        let email = document.getElementById("email");
+        email = email.value;
+        let age = document.getElementById("age");
+        age = age.value;
+        let username = document.getElementById("username");
+        username = username.value;
+        let password = document.getElementById("password");
+        password = password.value;
+        let role = document.getElementById("role");
+        role = role.value;
+
+        if (name.length === 0 || email.length === 0 || username.length === 0 || age.length === 0 || password.length === 0 || role.length === 0) {
+            alert("Missing information");
+            return;
+        }
+        if (document.getElementById(username) != null) {
+            alert("Username already exists");
+            return;
+        }
+        if (!checkPassword(password)) {
+            alert("Invalid password");
+            return;
+        }
+        if (age < 18 && role === "teacher") {
+            alert("Can't add this user");
+            return;
+        }
+
+        let row = "";
+        if (role === "teacher") {
+            counter++;
+            document.getElementById("active").innerHTML = counter;
+            row = "<tr style='background: lightgreen' id='" + username + "'><td>" + name + "</td><td>" + username + "</td><td>" + email + "</td><td>" + age + "</td><td>" + role + "</td><td><button onclick='hire(this)'>Hire</button></td></tr>"
+
+        } else {
+            row = "<tr style='background: lightblue' id='" + username + "'><td>" + name + "</td><td>" + username + "</td><td>" + email + "</td><td>" + age + "</td><td>" + role + "</td></tr>"
+        }
+
+        let table = document.getElementById("table");
+        table.innerHTML += row;
+    }
+
+    function checkPassword(password) {
+        if (password.length < 10)
+            return false;
+        let numbers = 0, letters = 0;
+        for (let i = 0; i < password.length; i++) {
+            let code = password.charCodeAt(i);
+            if (code >= 65 && code <= 90) { // mali bukvi se od 97 do 122
+                letters++;
+            }
+        }
+        for (let i = 0; i < 10; i++) {
+            if (password.indexOf(i) !== -1) {
+                numbers++;
+            }
+        }
+        if (numbers === 0)
+            return false;
+        if (letters === 0)
+            return false;
+        return true;
+    }
+
+    function hire(object) {
+        let row = object.parentNode.parentNode;
+        row.style.background = "gray";
+        object.remove();
+        counter--;
+        document.getElementById("active").innerHTML = counter;
+    }
+</script>
+</body>
+</html>

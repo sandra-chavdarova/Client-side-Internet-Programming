@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        table {
+            width: 80%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+        button{
+            padding: 5px;
+        }
+    </style>
+</head>
+
+<body>
+<h1>Products</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Product</th>
+        <th>Key</th>
+        <th>Price</th>
+        <th>Number of items</th>
+        <th>Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td class="name">Apples</td>
+        <td class="key">001</td>
+        <td class="price">50</td>
+        <td class="number">20</td>
+        <td class="total">1000</td>
+    </tr>
+    <tr>
+        <td class="name">Milk</td>
+        <td class="key">002</td>
+        <td class="price">80</td>
+        <td class="number">5</td>
+        <td class="total">400</td>
+    </tr>
+    <tr>
+        <td class="name">Bread</td>
+        <td class="key">003</td>
+        <td class="price">40</td>
+        <td class="number">1</td>
+        <td class="total">40</td>
+    </tr>
+    <tr>
+        <td class="name">Chocolate</td>
+        <td class="key">004</td>
+        <td class="price">60</td>
+        <td class="number">10</td>
+        <td class="total">600</td>
+    </tr>
+    </tbody>
+</table>
+<br>
+<label>Item: </label> <input id="item" type="text"><br><br>
+<label>Number of items: </label> <input id="number" type="text">
+<br><br>
+<button id="confirm" onclick="changeTotal()">Enter</button>
+
+<script>
+    function changeTotal() {
+        let name = document.getElementsByClassName("name");
+        let key = document.getElementsByClassName("key");
+        let price = document.getElementsByClassName("price");
+        let number = document.getElementsByClassName("number");
+        let total = document.getElementsByClassName("total");
+        let item = document.getElementById("item").value;
+        let num = document.getElementById("number").value;
+
+        for (let i = 0; i < name.length; i++) {
+            if (name[i].innerHTML.toLowerCase() === item.toLowerCase()) {
+                number[i].innerHTML = num;
+                total[i].innerHTML = parseInt(num) * parseInt(price[i].innerHTML);
+            }
+        }
+    }
+</script>
+</body>
+</html>

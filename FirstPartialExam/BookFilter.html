@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab6 postkolokviumska</title>
+    <style>
+        body, input, button, select {
+            font-size: 17px;
+            font-family: Calibri, serif;
+        }
+
+        div {
+            margin-bottom: 15px;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 2px solid black;
+            text-align: center;
+            padding: 5px;
+            width: 300px;
+        }
+
+        th {
+            background: #dadada;
+        }
+
+        button {
+            padding: 3px;
+            margin-right: 5px;
+        }
+
+        #filter {
+            margin-top: 10px;
+        }
+
+        .fiction {
+            background: #b8d6e0;
+        }
+
+        .non-fiction {
+            background: #cceccc;
+        }
+
+        .romance {
+            background: #ffdfe5;
+        }
+
+        .fantasy {
+            background: #c9b3ee;
+        }
+    </style>
+</head>
+<body>
+<h1>Books</h1>
+<div>
+    Book name: <input id="name">
+</div>
+<div>
+    Author: <input id="author">
+</div>
+<div>
+    Genre: <select id="genre">
+    <option>fiction</option>
+    <option>non-fiction</option>
+    <option>romance</option>
+    <option>fantasy</option>
+</select>
+</div>
+<div>
+    <button onclick="add_book()">Add</button>
+</div>
+<hr>
+<h3>Filters</h3>
+<div id="filter">
+    Genre<select id="genreFilter" oninput="filter_books()">
+    <option></option>
+    <option>fiction</option>
+    <option>non-fiction</option>
+    <option>romance</option>
+    <option>fantasy</option>
+</select>
+</div>
+<div>
+    Author: <input id="authorFilter" oninput="filter_author()">
+</div>
+<table id="table">
+    <tr>
+        <th>Book name</th>
+        <th>Author</th>
+        <th>Genre</th>
+        <th>Actions</th>
+    </tr>
+</table>
+
+<script>
+    function Book(name, author, genre) {
+        this.name = name;
+        this.author = author;
+        this.genre = genre;
+    }
+
+    let books = [];
+
+    function add_book() {
+        let name = document.getElementById("name");
+        name = name.value;
+        let author = document.getElementById("author");
+        author = author.value;
+        let genre = document.getElementById("genre");
+        genre = genre.value;
+        let book = new Book(name, author, genre);
+        books.push(book);
+        let bookRow = "<tr class='" + genre + "'><td>" + name + "</td><td>" + author + "</td><td>" + genre + "</td><td><button onclick='edit_book(this)'>Edit</button><button onclick='delete_book(this)'>Delete</button></td></tr>";
+        let table = document.getElementById("table");
+        table.innerHTML += bookRow;
+    }
+
+    function filter_books() {
+        let value = document.getElementById("genreFilter");
+        value = value.value;
+        let rows = document.getElementsByTagName("tr");
+        for (let i = 1; i < rows.length; i++) {
+            let genre = rows[i].getAttribute("class");
+            if (genre === value || value.length === 0) {
+                rows[i].style.display = "";
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+    }
+
+    function filter_author() {
+        let author = document.getElementById("authorFilter");
+        author = author.value;
+        let rows = document.getElementsByTagName("tr");
+        for (let i = 1; i < rows.length; i++) {
+            let rowAuthor = rows[i].getElementsByTagName("td")[1];
+            rowAuthor = rowAuthor.innerHTML;
+            if (rowAuthor.startsWith(author) || author.length === 0) {
+                rows[i].style.display = "";
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+    }
+
+    function delete_book(object) {
+        let row = object.parentNode.parentNode;
+        row.remove();
+    }
+
+    function edit_book(object) {
+        let row = object.parentNode.parentNode;
+        let data = row.getElementsByTagName("td");
+        data[data.length - 1].innerHTML = "<button onclick='save_changes(this)'>Save</button><button onclick='remove_row(this)'>Delete</button>"
+        for (let i = 0; i < data.length - 1; i++) {
+            data[i].innerHTML = "<input type='text' value='" + data[i].innerHTML + "'>";
+        }
+    }
+
+    function save_changes(object) {
+        let row = object.parentNode.parentNode;
+        let data = row.getElementsByTagName("td");
+        data[data.length - 1].innerHTML = "<button onclick='make_changes(this)'>Edit</button><button onclick='remove_row(this)'>Delete</button>"
+        for (let i = 0; i < data.length - 1; i++) {
+            let info = data[i].getElementsByTagName("input")[0].value;
+            data[i].innerHTML = info;
+        }
+    }
+</script>
+</body>
+</html>

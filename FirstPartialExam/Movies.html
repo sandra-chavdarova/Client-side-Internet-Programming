@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Movies</title>
+    <style>
+        body {
+            background: #f1efef;
+            padding: 30px;
+        }
+
+        button {
+            background: lightblue;
+            border-radius: 10px;
+            border: 2px solid black;
+        }
+
+        select, input {
+            border-radius: 10px;
+            border: 2px solid black;
+        }
+
+        body, select, input, button {
+            font-family: Calibri, serif;
+            font-size: 17px;
+        }
+
+        div {
+            margin-bottom: 15px;
+        }
+
+        .card {
+            display: inline-block;
+            background: #d2c8ff;
+            border: 2px solid black;
+            text-align: center;
+            border-radius: 5px;
+            width: 200px;
+            height: 200px;
+            margin: 5px;
+        }
+
+        #cards {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+<h1>Watch list</h1>
+<div>
+    <label>Title: <input type="text" id="name"></label>
+</div>
+<div>
+    <label>Genre: <input type="text" id="genre"></label>
+</div>
+<div>
+    <label>Status: <input type="radio" id="watched" name="status">Watched
+        <input type="radio" id="toWatch" name="status">To Watch</label>
+</div>
+<div>
+    <label>Rating: <input type="text" id="rating"></label>
+</div>
+<div>
+    <button onclick="add_movie()">Add Movie</button>
+</div>
+<hr>
+<div>
+    <label>Filter by Status: <select id="filterStatus">
+        <option>View All</option>
+        <option>Watched</option>
+        <option>To Watch</option>
+    </select></label>
+    <button onclick="filterStatus()">Filter</button>
+</div>
+<div>
+    <label>Search by Genre: <input type="text" id="filterGenre"></label>
+    <button onclick="searchGenre()">Search</button>
+</div>
+<div id="cards">
+
+</div>
+
+<script>
+    let movies = [];
+
+    function Movie(name, genre, status, rating) {
+        this.name = name;
+        this.genre = genre;
+        this.status = status;
+        this.rating = rating;
+    }
+
+    function add_movie() {
+        let name = document.getElementById("name");
+        name = name.value;
+        let genre = document.getElementById("genre");
+        genre = genre.value;
+        let rating = document.getElementById("rating");
+        rating = rating.value;
+        let status;
+        let watched = document.getElementById("watched");
+        if (watched.checked) {
+            status = true;
+        } else {
+            status = false;
+        }
+
+        let movie = new Movie(name, genre, status, rating);
+        movies.push(movie);
+
+        let movieDiv = "<div class='card'><p>" + name + "</p><p>Genre: " + genre + "</p><p>Rating: " + rating + "</p><p><button onclick='delete_movie(this)'>Remove</button></p></div>";
+        let cards = document.getElementById("cards");
+        cards.innerHTML += movieDiv;
+    }
+
+    function print_movie(movie) {
+        let movieDiv = "<div class='card'><p>" + movie.name + "</p><p>Genre: " + movie.genre + "</p><p>Rating: " + movie.rating + "</p><p><button onclick='delete_movie(this)'>Remove</button></p></div>";
+        let cards = document.getElementById("cards");
+        cards.innerHTML += movieDiv;
+    }
+
+    function delete_movie(object) {
+        let card = object.parentNode.parentNode;
+        card.remove();
+    }
+
+    function filterStatus() {
+        let filter = document.getElementById("filterStatus");
+        filter = filter.value;
+        let filtered = movies;
+        if (filter === "Watched") {
+            filtered = movies.filter(movie => movie.status === true);
+            filtered = filtered.sort((a, b) => parseInt(b.rating) - parseInt(a.rating));
+        } else if (filter === "To Watch") {
+            filtered = movies.filter(movie => movie.status === false);
+        }
+        document.getElementById("cards").innerHTML = "";
+        for (let i = 0; i < filtered.length; i++) {
+            print_movie(filtered[i]);
+        }
+    }
+
+    function searchGenre() {
+        let filter = document.getElementById("filterGenre");
+        filter = filter.value;
+        let filtered = movies.filter(movie => movie.genre === filter);
+        if (filter.length === 0)
+            filtered = movies;
+        document.getElementById("cards").innerHTML = "";
+        for (let i = 0; i < filtered.length; i++) {
+            print_movie(filtered[i]);
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flights</title>
+    <style>
+        body, input, select {
+            font-size: 17px;
+            font-family: Calibri, serif;
+        }
+
+        input, select {
+            width: 200px;
+            text-align: center;
+        }
+
+        div {
+            margin-bottom: 10px;
+        }
+
+        #cards li {
+            padding: 10px;
+            width: 300px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<h1>Регистрирај лет</h1>
+<div>
+    Име и презиме: <input type="text" id="name">
+</div>
+<div>
+    Ознака за летало: <input type="text" id="key">
+</div>
+<div>
+    Координати на лет: <input type="text" id="coordinates">
+</div>
+<div>
+    Радиус на лет: <input type="text" id="radius">
+</div>
+<div>
+    Висина на лет: <input type="text" id="height">
+</div>
+<div>
+    Име и презиме: <select id="type">
+    <option>Едрилица</option>
+    <option>Дрон</option>
+</select>
+</div>
+<div>
+    <button onclick="register()">Најави</button>
+</div>
+<h1>Регистрирани летови</h1>
+<p>Вкупно најавени летови: <span id="total">0</span></p>
+<div id="cards">
+
+</div>
+
+<script>
+    let counter = 0;
+
+    function register() {
+        let name = document.getElementById("name");
+        name = name.value;
+        let key = document.getElementById("key");
+        key = key.value;
+        let coordinates = document.getElementById("coordinates");
+        coordinates = coordinates.value;
+        let radius = document.getElementById("radius");
+        radius = radius.value;
+        let height = document.getElementById("height");
+        height = height.value;
+        let type = document.getElementById("type");
+        type = type.value;
+        if (name.length === 0 || coordinates.length === 0 || key.length === 0 || radius.length === 0 || height.length === 0) {
+            alert("Missing information");
+            return;
+        }
+        let number = key.split("-");
+        number = number[2];
+        if (number.length !== 4) {
+            alert("Invalid code");
+            // console.log(number);
+            return;
+        }
+        if (number % 1111 === 0) {
+            number = true;
+            // console.log(number);
+        } else {
+            number = false;
+        }
+        if (!number && (radius > 500 || height > 150)) {
+            alert("Invalid input");
+            return;
+        }
+        let flight = "";
+        if (type === "Едрилица") {
+            flight = "<ul><li style='background: lightgreen; border: 2px solid black'><p>" + name + ", " + key + "</p><p>Радиус: " + radius + ", Висина: " + height + "</p><p>" + type + "</p><button onclick='confirm_flight(this)'>Потврди</button><button onclick='deny_flight(this)'>Откажи</button></li></ul>";
+        } else if (radius === height) {
+            flight = "<ul><li style='border: 2px solid black'><p>" + name + ", " + key + "</p><p>Радиус: " + radius + ", Висина: " + height + "</p><p>" + type + "</p><button onclick='confirm_flight(this)'>Потврди</button><button onclick='deny_flight(this)'>Откажи</button></li></ul>";
+        } else {
+            flight = "<ul><li><p>" + name + ", " + key + "</p><p>Радиус: " + radius + ", Висина: " + height + "</p><p>" + type + "</p><button onclick='confirm_flight(this)'>Потврди</button><button onclick='deny_flight(this)'>Откажи</button></li></ul>";
+        }
+        let cards = document.getElementById("cards");
+        cards.innerHTML += flight;
+        counter++;
+        let total = document.getElementById("total");
+        total.innerHTML = counter;
+    }
+
+    function confirm_flight(object) {
+        let item = object.parentNode;
+        item.style.background = "lightgreen";
+    }
+
+    function deny_flight(object) {
+        let item = object.parentNode;
+        counter--;
+        let total = document.getElementById("total");
+        total.innerHTML = counter;
+        item.remove();
+    }
+</script>
+</body>
+</html>

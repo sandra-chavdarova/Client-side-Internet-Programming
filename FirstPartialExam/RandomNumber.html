@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 50%;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+<label>Enter a number: </label><input id="number" type="text">
+<button onclick="count()">Enter</button>
+<br><br>
+<div id="numbers">
+
+</div>
+<table>
+    <thead>
+    <tr>
+        <th>Even</th>
+        <th>Odd</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td id="even"></td>
+        <td id="odd"></td>
+    </tr>
+    </tbody>
+</table>
+<script>
+    function count() {
+        let number = parseInt(document.getElementById("number").value);
+        let even = 0, odd = 0;
+        for (let i = 0; i < number; i++) {
+            let n = Math.round(Math.random() * 100);
+            console.log(n);
+            if (n % 2 === 0)
+                even++;
+            else
+                odd++;
+        }
+        document.getElementById("even").innerHTML = even;
+        document.getElementById("odd").innerHTML = odd;
+    }
+</script>
+</body>
+</html>

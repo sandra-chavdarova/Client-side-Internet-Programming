@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body, input, button, select {
+            font-family: Calibri, serif;
+            font-size: 17px;
+        }
+
+        #registration > div {
+            margin-bottom: 15px;
+
+        }
+
+        #cards div {
+            margin: 15px;
+            display: inline-block;
+        }
+
+        .circle {
+            width: 300px;
+            height: 300px;
+            border: 2px solid black;
+            margin-right: 15px;
+            border-radius: 100%;
+            text-align: center;
+        }
+
+        .square {
+            width: 300px;
+            height: 300px;
+            border: 2px solid black;
+            margin-right: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<h1>Game</h1>
+<div id="registration">
+    <h2>Registration</h2>
+    <div>
+        Name: <input type="text" id="name">
+    </div>
+    <div>
+        Code: <input type="text" id="code">
+    </div>
+    <div>
+        Value: <input type="text" id="value">
+    </div>
+    <div>
+        Shape: <select id="shape">
+        <option>square</option>
+        <option>circle</option>
+    </select>
+    </div>
+    <div>
+        Color: <select id="color">
+        <option>lightblue</option>
+        <option>lightgreen</option>
+        <option>mediumpurple</option>
+        <option>pink</option>
+        <option>lightyellow</option>
+        <option>lightgray</option>
+    </select>
+    </div>
+    <div>
+        <button onclick="add_card()">Add</button>
+    </div>
+</div>
+<div id="card_place">
+    <h2>Cards</h2>
+    <button onclick="start_game()">Start Game</button>
+</div>
+<div id="cards">
+
+</div>
+<script>
+    let cards = [];
+    let counter = 0;
+
+    function Card(name, code, value, shape, color, id) {
+        this.name = name;
+        this.code = code;
+        this.value = value;
+        this.shape = shape;
+        this.color = color;
+        this.id = id;
+    }
+
+    let total_global = 0;
+
+    function add_card() {
+        let name = document.getElementById("name");
+        name = name.value;
+        let code = document.getElementById("code");
+        code = code.value;
+        let value = document.getElementById("value");
+        value = value.value;
+        let shape = document.getElementById("shape");
+        shape = shape.value;
+        let color = document.getElementById("color");
+        color = color.value;
+        if (name.length === 0 || code.length === 0 || value.length === 0) {
+            alert("Missing information");
+            return;
+        }
+        if (!check_code(code)) {
+            alert("Invalid code");
+            return;
+        }
+        let cardObject = new Card(name, code, value, shape, color, counter);
+        cards.push(cardObject);
+        counter++;
+        let card = "<div id='" + counter + "' style='background: " + color + "' class='" + shape + "'><p>Name: " + name + "</p><p>Code: " + code + "</p><p>Value: " + value + "</p></div>";
+        let cardDiv = document.getElementById("cards");
+        cardDiv.innerHTML += card;
+    }
+
+    function check_code(code) {
+        for (let i = 0; i < 10; i++) {
+            if (code.indexOf(i) !== -1)
+                return false;
+        }
+
+        if (code.indexOf("#") !== -1 || code.indexOf("&") !== -1) {
+            return false;
+        }
+
+        return code === code.toUpperCase();
+    }
+
+    function start_game() {
+        document.getElementById("registration").innerHTML = "";
+        let cardsDiv = document.getElementById("cards");
+        cards = cardsDiv.getElementsByTagName("div")
+        for (let i = 0; i < cards.length; i++) {
+            let random = Math.floor(Math.random() * 100);
+            let shape = (random < 50) ? "circle" : "square";
+            let position = parseInt(Math.random() * cards.length + 1);
+            cards[i].innerHTML += "<p>Position: " + position + "</p><p>Shape: " + shape + "</p><button onclick='change_shape(this)'>Change shape</button><br><button onclick='shift_left(this)'>Left</button><button onclick='shift_right(this)'>Right</button>"
+        }
+    }
+
+    function change_shape(object) {
+        let card = object.parentNode;
+        let shape = card.getAttribute("class");
+        if (shape === "circle") {
+            card.setAttribute("class", "square")
+        } else {
+            card.setAttribute("class", "circle");
+        }
+    }
+
+    function shift_left(object) {
+        let card = object.parentNode;
+        let position = card.getAttribute("id");
+        let previous = document.getElementById(position - 1);
+        let previous_html = previous.innerHTML;
+        previous.innerHTML = card.innerHTML;
+        card.innerHTML = previous_html;
+        let previous_style = previous.style.background;
+        previous.style.background = card.style.background
+        card.style.background = previous_style
+        let previous_class = previous.getAttribute("class")
+        previous.setAttribute("class", card.getAttribute("class"))
+        card.setAttribute("class", previous_class)
+    }
+
+    function shift_right(object) {
+        let card = object.parentNode;
+        let position = card.getAttribute("id");
+        let next = document.getElementById(parseInt(position) + 1);
+        let next_html = next.innerHTML;
+        next.innerHTML = card.innerHTML;
+        card.innerHTML = next_html;
+        let next_style = next.style.background;
+        next.style.background = card.style.background;
+        card.style.background = next_style;
+        let next_class = next.getAttribute("class");
+        next.setAttribute("class", card.getAttribute("class"));
+        card.setAttribute("class", next_class);
+    }
+</script>
+</body>
+</html>
