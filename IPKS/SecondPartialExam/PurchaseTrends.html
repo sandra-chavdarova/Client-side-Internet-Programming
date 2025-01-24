@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vezbanje</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        #chart {
+            width: 1000px;
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+<select id="chartType" onchange="visualize()">
+    <option>Select a chart</option>
+    <option>Bubble</option>
+    <option>Pie</option>
+    <option>Bar</option>
+    <option>Line</option>
+</select>
+<select id="people" onchange="singlePerson()">
+    <option>Select a person</option>
+</select>
+
+<div id="chart">
+
+</div>
+
+
+<script>
+    const url = "#";
+    let peopleData = [];
+
+    document.getElementById("people").style.display = "none";
+
+    async function get_data() {
+        let response = await fetch(url);
+        let data = await response.json();
+        peopleData = data;
+        console.log(peopleData);
+    }
+
+    function populateSelect() {
+        let names = peopleData.map(person => person.name);
+        let select = document.getElementById("people");
+        names.forEach(person => {
+            let option = document.createElement("option");
+            option.value = person;
+            option.innerHTML = person;
+            select.appendChild(option);
+        })
+    }
+
+    function visualize() {
+        let type = document.getElementById("chartType").value;
+        if (type === "Bubble")
+            bubble_chart();
+        if (type === "Pie")
+            pie_chart();
+        if (type === "Bar")
+            bar_chart();
+        if (type === "Line")
+            line_chart();
+    }
+
+    function bubble_chart() {
+        var data = peopleData.map(person => ({
+            x: [person.location_coordinates.longitude],
+            y: [person.location_coordinates.latitude],
+            mode: "markers",
+            marker: {
+                size: [Math.sqrt(person.account_balance) * 2],
+                color: peopleData.map(person =>
+                    `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`),
+            },
+            name: person.name
+        }))
+
+        var layout = {
+            title: {
+                text: 'Customer Locations'
+            },
+            xaxis: {
+                title: "Longitudes"
+            },
+            yaxis: {
+                title: "Latitudes"
+            }
+        };
+
+        Plotly.newPlot('chart', data, layout);
+    }
+
+    function pie_chart() {
+        var data = [{
+            values: peopleData.map(person => {
+                let sum = 0;
+                for (let i = 0; i < person.purchase_trend.length; i++) {
+                    sum += person.purchase_trend[i];
+                }
+                return sum;
+            }),
+            labels: peopleData.map(person => person.name),
+            hole: .4,
+            type: 'pie'
+        }];
+
+        var layout = {
+            title: {
+                text: 'Purchase Distribution'
+            }
+        };
+
+        Plotly.newPlot('chart', data, layout);
+    }
+
+    function bar_chart() {
+        var trace1 = {
+            x: peopleData.map(person => person.name),
+            y: peopleData.map(person => {
+                let sum = 0;
+                for (let i = 0; i < person.purchase_trend.length; i++) {
+                    sum += person.purchase_trend[i];
+                }
+                return sum;
+            }),
+            name: 'Total purchases',
+            type: 'bar',
+            marker: {color: "mediumpurple"}
+        };
+
+        var trace2 = {
+            x: peopleData.map(person => person.name),
+            y: peopleData.map(person => person.account_balance),
+            name: 'Account balance',
+            type: 'bar',
+            marker: {color: "lightblue"}
+        };
+
+        var data = [trace1, trace2];
+
+        var layout = {barmode: 'stack', title: "Total purchases vs. Account balance"};
+
+        Plotly.newPlot('chart', data, layout);
+    }
+
+    function line_chart() {
+        document.getElementById("people").style.display = "";
+        populateSelect();
+        var data = peopleData.map(person => ({
+            x: Array.from({length: person.purchase_trend.length}, (_, i) => i + 1),
+            y: person.purchase_trend,
+            mode: 'lines+markers',
+            type: 'scatter'
+        }))
+
+        Plotly.newPlot('chart', data);
+    }
+
+    function singlePerson() {
+        let chosenPerson = document.getElementById("people").value;
+        chosenPerson = peopleData.find(person => person.name === chosenPerson);
+        let data = {
+            x: Array.from({length: chosenPerson.purchase_trend.length}, (_, i) => i + 1),
+            y: chosenPerson.purchase_trend,
+            type: 'scatter',
+            marker: {
+                color: "green"
+            }
+        }
+        let layout = {
+            title: "Purchase Trend of " + chosenPerson.name
+        }
+
+        Plotly.newPlot('chart', [data], layout);
+    }
+    get_data();
+</script>
+</body>
+</html>
