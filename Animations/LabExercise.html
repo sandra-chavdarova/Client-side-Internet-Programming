@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab Exercise for Animations</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <style>
+        .circle {
+            border-radius: 100%;
+            width: 100px;
+            height: 100px;
+            border: 1px solid black;
+            position: absolute;
+            top: 300px;
+            left: 200px;
+        }
+
+        #container {
+            border: 1px solid black;
+            width: 500px;
+            height: 500px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+<h2>Color Shape Animations</h2>
+<label>Choose a color: <select onchange="animateCircle()" id="color">
+    <option>Select a color</option>
+    <option>Red</option>
+    <option>Blue</option>
+    <option>Yellow</option>
+</select></label><br><br>
+<button onclick="stopAnimation()">Stop Animation</button>
+<button onclick="resetAnimation()">Reset</button>
+<div id="container">
+
+</div>
+
+<script>
+    let animation;
+
+    function animateCircle() {
+        let color = document.getElementById("color").value;
+        let container = document.getElementById("container");
+        container.innerHTML = "";
+        let circle = document.createElement("div");
+        circle.setAttribute("class", "circle");
+        container.appendChild(circle);
+        if (color === "Red") {
+            circle.style.background = "red";
+            animation = anime.timeline({
+                loop: true,
+                easing: "linear"
+            })
+                .add({
+                    targets: circle,
+                    duration: 1000,
+                    scale: [1, 2],
+                    easing: "linear"
+                })
+                .add({
+                    targets: circle,
+                    duration: 1000,
+                    scale: [2, 1],
+                    easing: "linear"
+                })
+        } else if (color === "Yellow") {
+            circle.style.background = "yellow";
+            animation = anime.timeline({
+                loop: true,
+                easing: "linear"
+            })
+                .add({
+                    targets: circle,
+                    duration: 2000,
+                    opacity: [1, 0],
+                })
+                .add({
+                    targets: circle,
+                    duration: 2000,
+                    opacity: [0, 1],
+                })
+        } else if (color === "Blue") {
+            circle.style.background = "blue";
+            animation = anime.timeline({
+                easing: "linear",
+                loop: true
+            })
+                .add({
+                    targets: circle,
+                    translateY: [0, 200],
+                    duration: 1000
+                })
+                .add({
+                    targets: circle,
+                    translateY: [200, 0],
+                    duration: 1000
+                })
+        } else {
+            container.innerHTML = "";
+        }
+    }
+
+    function resetAnimation() {
+        let container = document.getElementById("container");
+        container.innerHTML = "";
+        document.getElementById("color").value = "Select a color";
+    }
+
+    function stopAnimation() {
+        animation.pause();
+    }
+</script>
+</body>
+</html>
