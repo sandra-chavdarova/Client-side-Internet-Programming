@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rectangles</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <style>
+    #container {
+      width: 800px;
+      height: 600px;
+      border: 2px solid black;
+    }
+
+    .rectangle {
+      border: 2px solid black;
+      position: absolute;
+    }
+
+    .grom {
+      height: 600px;
+      width: 3px;
+      background: black;
+      position: absolute;
+    }
+
+    p {
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    span {
+      font-weight: normal;
+    }
+  </style>
+</head>
+<body>
+<div id="container">
+
+</div>
+<p>Score: <span id="score">0</span></p>
+<script>
+  /*
+  [
+{
+  "color": "blue",
+  "id": "1",
+  "dir": "vertical",
+  "width": "87px",
+  "height": "43px",
+  "score": 52,
+  "left": 50,
+  "top": 180
+},
+{
+  "color": "green",
+  "id": "2",
+  "dir": "horizontal",
+  "width": "112px",
+  "height": "48px",
+  "score": 2,
+  "left": 140,
+  "top": 250
+},
+{
+  "color": "red",
+  "id": "3",
+  "dir": "vertical",
+  "width": "47px",
+  "height": "97px",
+  "score": 37,
+  "left": 560,
+  "top": 380
+},
+{
+  "color": "purple",
+  "id": "4",
+  "dir": "vertical",
+  "width": "71px",
+  "height": "71px",
+  "score": 150,
+  "left": 450,
+  "top": 350
+},
+{
+  "color": "pink",
+  "id": "5",
+  "dir": "horizontal",
+  "width": "76px",
+  "height": "95px",
+  "score": 24,
+  "left": 650,
+  "top": 15
+},
+{
+  "color": "orange",
+  "id": "6",
+  "dir": "vertical",
+  "width": "100px",
+  "height": "132px",
+  "score": 73,
+  "left": 200,
+  "top": 70
+}
+]
+   */
+  let n = 0;
+  const url = "#";
+  fetch(url)
+          .then(response => response.json())
+          .then(function (data) {
+            n = data.length;
+            for (let i = 0; i < data.length; i++) {
+              let rectangle = "<div id='" + data[i].id + "' direction='" + data[i].dir + "' current='" + (Math.random() * n % 2) + "' class='rectangle' style='width: " + data[i].width + "; height: " + data[i].height + "; background: " + data[i].color + "; left: " + data[i].left + "px; top: " + data[i].top + "px' score='" + data[i].score + "'></div>";
+              document.getElementById("container").innerHTML += rectangle;
+            }
+            start_moving();
+          })
+  // 0 - left
+  // 1 - right
+  // 0 - up
+  // 1 - down
+  let counter = 0;
+  let score = 0;
+
+  function start_moving() {
+    counter++;
+    for (let i = 1; i <= n; i++) {
+      let rec = document.getElementById(i);
+      let dir = rec.getAttribute("direction");
+      if (dir == "vertical") {
+        let current_top = parseInt(rec.style.top.split("px")[0]);
+        let height = parseInt(rec.style.height.split("px")[0]);
+        if (rec.getAttribute("current") == 0) {
+          current_top -= 5;
+          if (current_top == 0)
+            rec.setAttribute("current", 1);
+        } else {
+          current_top += 5;
+          if (current_top + height >= 600)
+            rec.setAttribute("current", 0);
+        }
+        rec.style.top = current_top + "px";
+      } else {
+        let current_left = parseInt(rec.style.left.split("px")[0]);
+        let width = parseInt(rec.style.width.split("px")[0]);
+        if (rec.getAttribute("current") == 0) {
+          current_left -= 5;
+          if (current_left == 0)
+            rec.setAttribute("current", 1);
+        } else {
+          current_left += 5;
+          if (current_left + width >= 800)
+            rec.setAttribute("current", 0);
+        }
+        rec.style.left = current_left + "px";
+      }
+    }
+    if (counter < 100)
+      setTimeout(start_moving, 50);
+    else {
+      counter = 0;
+      grom();
+    }
+  }
+
+  let grom_counter = 0;
+
+  function grom() {
+    grom_counter++;
+    let position = parseInt(Math.random() * 800);
+    let grom = "<div class='grom' style='left: " + position + "px'></div>";
+    document.getElementById("container").innerHTML += grom;
+
+    for (let i = 1; i <= n; i++) {
+      let rec = document.getElementById(i);
+      let start = parseInt(rec.style.left.split("px")[0]);
+      let end = parseInt(rec.style.left.split("px")[0]) + parseInt(rec.style.width.split("px")[0]);
+      if (position >= start && position <= end) {
+        score += parseInt(rec.getAttribute("score"));
+        document.getElementById("score").innerHTML = score;
+        console.log(score);
+        // rec.remove();
+        rec.setAttribute("score", 0);
+        rec.style.display = "none";
+      }
+    }
+
+    if (grom_counter <= 3) {
+      setTimeout(clear_grom, 900);
+      setTimeout(start_moving, 1000);
+    }
+  }
+
+  function clear_grom() {
+    let groms = document.getElementsByClassName("grom");
+    for (let i = 0; i <= groms.length; i++) {
+      groms[i].style.display = "none";
+    }
+  }
+</script>
+</body>
+</html>
