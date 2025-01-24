@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Animations 2 anime.js</title>
+</head>
+<style>
+    .box {
+        width: 150px;
+        height: 150px;
+        background: mediumpurple;
+    }
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+<body>
+<div class="box"></div>
+
+<script>
+    function animateBox() {
+        anime({
+            targets: ".box",
+            keyframes: [
+                {translateX: 500, duration: 2000},
+                {translateY: 300, duration: 3000},
+                {scale: 1.5, duration: 1500}
+            ],
+            duration: 3000,
+        })
+    }
+
+    window.onload = function () {
+        setTimeout(animateBox, 1500);
+    }
+</script>
+</body>
+</html>

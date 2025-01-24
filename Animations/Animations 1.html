@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Animations 1</title>
+</head>
+<style>
+    .box {
+        width: 150px;
+        height: 150px;
+        background: mediumpurple;
+        transition: all 1.5s ease;
+        display: none;
+    }
+
+</style>
+<body>
+<div class="box"></div>
+
+<script>
+    function showBoxandSlide() {
+        let box = document.getElementsByClassName("box")[0];
+        box.style.display = "flex";
+        box.style.position = "relative";
+        let position = 0;
+        let interval = setInterval(() => { // inline funkcija
+            position += 10;
+            box.style.left = `${position}px`;
+            if (position >= 500) {
+                clearInterval(interval);
+            }
+        }, 20)
+    }
+
+    // za da se sluci se otkako kje se loadne prozorecot
+    window.onload = function () {
+        setTimeout(showBoxandSlide, 2000); // 2s
+
+    }
+</script>
+</body>
+</html>

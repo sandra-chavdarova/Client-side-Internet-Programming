@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Animations 2 anime.js</title>
+</head>
+<style>
+    .red-box {
+        width: 150px;
+        height: 150px;
+        background: red;
+    }
+
+    .green-box {
+        width: 150px;
+        height: 150px;
+        background: green;
+    }
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+<body>
+<div class="red-box"></div>
+<div class="green-box"></div>
+
+<script>
+    function animateBox() {
+        anime.timeline({
+            loop: true
+        })
+            .add({
+                targets: ".red-box",
+                translateX: 500,
+                duration: 3000
+            })
+            .add({
+                targets: ".green-box",
+                translateX: 500,
+                duration: 3000
+            }, "-=1500") // posledniot argument znaci deka na 1500ms kje ja pocne vtorava animacija
+    }
+
+    window.onload = function () {
+        setTimeout(animateBox, 1500);
+    }
+</script>
+</body>
+</html>
