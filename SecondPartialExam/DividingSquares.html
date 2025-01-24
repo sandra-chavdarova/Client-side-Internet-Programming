@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dividing Squares</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <style>
+    #container {
+      width: 800px;
+      height: 800px;
+    }
+
+    div {
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+<div id="container">
+
+
+</div>
+<script>
+  const url = "https://webhook.site/ba4d3ced-a75d-439c-9e2d-0d6186c90851";
+  let info;
+  fetch(url)
+          .then(response => response.json())
+          .then(function (data) {
+            info = data;
+            let container = document.getElementById("container");
+            for (let i = 0; i < info.length; i++) {
+              let left = Math.random() * 500 + "px";
+              let top = Math.random() * 500 + "px";
+              let square = "<div style='width: " + data[i].size + "px; height: " + data[i].size + "px; background: " + data[i].color + "; left: " + left + "; top: " + top + "' onclick='divide(this)'></div>";
+              container.innerHTML += square;
+            }
+          })
+
+  function divide(square) {
+    let container = document.getElementById("container");
+    let x = square.style.left.slice(0, square.style.left.length - 2);
+    let y = square.style.top.slice(0, square.style.top.length - 2);
+    let size = parseInt(square.style.width.slice(0, square.style.width.length - 2));
+    let positionsX = [parseInt(x) - size, parseInt(x) - size, parseInt(x) + size, parseInt(x) + size];
+    let positionsY = [parseInt(y) - size, parseInt(y) + size, parseInt(y) - size, parseInt(y) + size];
+    for (let i = 0; i < 4; i++) {
+      let child = document.createElement("div");
+      child.style.background = square.style.background;
+      child.style.top = square.style.top;
+      child.style.left = square.style.left;
+      child.style.width = square.style.width;
+      child.style.height = square.style.height;
+      child.setAttribute("onclick", "divide(this)")
+      container.appendChild(child);
+      anime({
+        targets: child,
+        easing: "linear",
+        top: positionsY[i],
+        left: positionsX[i],
+        duration: 1000
+      })
+      square.remove();
+    }
+  }
+</script>
+</body>
+</html>
