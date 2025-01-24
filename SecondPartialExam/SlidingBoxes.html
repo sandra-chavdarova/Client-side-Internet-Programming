@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sliding Boxes</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <style>
+        button {
+            margin: 10px;
+        }
+
+        .card {
+            position: absolute;
+        }
+
+        #container {
+            width: 1500px;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+<button onclick="move_left()"><-</button>
+<button onclick="move_right()">-></button>
+<div id="container">
+
+</div>
+<script>
+    const url = "https://webhook.site/76fb2551-1f9b-4cd7-9460-e9952efbea2f";
+    let response, box;
+    let container = document.getElementById("container");
+    fetch(url)
+        .then(response => response.json())
+        .then(function (data) {
+            response = data;
+            console.log(response)
+            box = document.createElement("div");
+            box.style.background = data[0].background;
+            box.style.width = data[0].width;
+            box.style.height = data[0].height;
+            box.className = "card";
+            container.appendChild(box);
+        })
+    let i = 0;
+
+    function move_right() {
+        if (i === parseInt(response.length) - 1)
+            i = 0;
+        else
+            i++;
+        let card = document.getElementsByClassName("card")[0];
+
+        anime({
+            targets: ".card",
+            translateX: container.clientWidth,
+            easing: "linear",
+            duration: 1500,
+        })
+
+        setTimeout(() => {
+            card.remove();
+            let newCard = document.createElement("div");
+            newCard.className = "card";
+            newCard.style.background = response[i].background;
+            newCard.style.width = response[i].width;
+            newCard.style.height = response[i].height;
+            container.appendChild(newCard);
+        }, 1000)
+    }
+
+    function move_left() {
+        if (i === 0)
+            i = response.length - 1;
+        else
+            i--;
+
+        let card = document.getElementsByClassName("card")[0];
+        card.remove();
+        let shift = parseInt(container.clientWidth - parseInt(response[i].width.slice(0, response[i].width.length - 2))) + 'px';
+        let newCard = document.createElement("div");
+        newCard.className = "card";
+        newCard.style.background = response[i].background;
+        newCard.style.width = response[i].width;
+        newCard.style.height = response[i].height;
+        newCard.style.left = shift;
+        container.appendChild(newCard);
+        anime({
+            targets: ".card",
+            easing: "linear",
+            left: "10px",
+            duration: 1000
+        })
+
+        setTimeout(() => {
+            newCard.style.left = 10 + 'px';
+        }, 1100)
+    }
+</script>
+</body>
+</html>
