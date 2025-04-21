@@ -1,4 +1,4 @@
-# Client-side-Internet-Programming 💻
+# Client-side Internet Programming 💻
 This repository contains solved exercises from the course Client-side Internet Programming, using HTML, CSS and JavaScript.
 
 # Contents
